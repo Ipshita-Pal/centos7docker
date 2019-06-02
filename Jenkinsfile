@@ -1,17 +1,22 @@
-node{
-	stage ('Scm Checkout'){
-	git credentialsId: 'github', url: 'https://github.com/anoopgawande/centos7docker.git'}
+node {
+   
+   stage('GITCODE'){
+      git credentialsId: 'GIT', url: 'https://github.com/Ipshita-Pal/centos7docker.git'
+   }
 
-	stage ('Build Docker Image'){
-	sh '/usr/bin/docker build -t agawande/httpd:latest .'}
-	
-	stage ('Push Docker Image'){
-	withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'dockerpwd', usernameVariable: 'dockeruser')]) {
-    sh "/usr/bin/docker login -u $dockeruser -p $dockerpwd"}
-	sh '/usr/bin/docker push agawande/httpd:latest'}
-		stage('deploy k8s') {
-    withCredentials([kubeconfigContent(credentialsId: '1k8s', variable: 'KUBECONFIG_CONTENT')]) {
-    sh 'kubectl apply -f demo.yaml -n radicalcicd'
+
+    stage('DOCIMAGE'){
+    sh label: '', script: 'docker build -t ipshita/centos7web:v1 .'
+
+}
+
+    stage('DOCPUSH'){
+    //withCredentials([usernamePassword(credentialsId: 'DOC', passwordVariable: 'pwd', usernameVariable: 'user')])
+    withCredentials([usernamePassword(credentialsId: 'DOC', passwordVariable: 'pwd', usernameVariable: 'user')])
+    {
+     sh "docker login -u $user -p $pwd"
     }
-  }
+     
+     sh 'docker push ipshita/centos7web:v1'
+}
 }
