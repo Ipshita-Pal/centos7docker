@@ -3,12 +3,12 @@ kind: Deployment
 metadata:
   name: democicd
 spec:
-  replicas: 20
+  replicas: 3
   strategy:
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
-  minReadySeconds: 5 
+  minReadySeconds: 5
   template:
     metadata:
       labels:
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: httpd
-        image: agawande/httpd:latest
+        image: ipshita/centos7web:v1
         ports:
         - containerPort: 80
         resources:
@@ -24,14 +24,6 @@ spec:
             cpu: 250m
           limits:
             cpu: 500m
-        volumeMounts:
-         - mountPath: "/mnt/azure"
-           name: volume
-      volumes:
-        - name: volume
-          persistentVolumeClaim:
-            claimName: azure-managed-disk
-
 
 ---
 apiVersion: v1
